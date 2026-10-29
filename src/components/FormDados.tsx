@@ -26,6 +26,28 @@ function FormDados() {
       </div>
 
       <div className={styles.field}>
+        <label>Senha:</label>
+        <input
+          type="password"
+          id="email"
+          name="email"
+          placeholder="Digite sua Senha"         
+          required
+        />
+      </div>
+
+      <div className={styles.field}>
+        <label>Confirme sua Senha:</label>
+        <input
+          type="password"
+          id="email"
+          name="email"
+          placeholder="Confirme sua Senha"         
+          required
+        />
+      </div>
+
+      <div className={styles.field}>
         <label>Data de nascimento:</label>
         <input
           type="date"

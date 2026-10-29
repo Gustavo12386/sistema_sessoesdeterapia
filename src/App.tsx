@@ -7,6 +7,7 @@ import Main from './components/MainPage.tsx'
 import logo from './assets/logo Clinica DM.png'
 import FormDados from './components/FormDados.tsx'
 import FormPagamento from './components/FormPagamento.tsx'
+import NewPassword from './components/NewPassword.tsx'
 
 function App() {  
 
@@ -21,6 +22,7 @@ function App() {
        <Route path='/formpayment' element={<FormPagamento/>}/>
        <Route path='/login' element={<Login/>}/>
        <Route path='/recoverypassword' element={<Recovery/>}/>
+       <Route path='/newpassword' element={<NewPassword/>}/>
        <Route path='/mainpage' element={<Main/>} />
      </Routes>
     </Router>  
