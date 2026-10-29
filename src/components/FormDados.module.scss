@@ -1,0 +1,143 @@
+$font-secondary: 'Quicksand', sans-serif;
+$color-field: #ffffff;
+$color-title: #d77b5e;
+$color-text: #171412;
+$button-color: #401b0e;
+
+.consultform{  
+  align-items: center;
+  justify-content: center;   
+  transform: translateX(50vh);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+  outline-offset: 2px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 9px;
+
+  label {
+    padding-left: 7px;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.5;
+    font-family: $font-secondary;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 50%;
+    min-height: 17px;
+    padding: 7px 11px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background-color: $color-field;
+    color: $color-text;
+    font-family: $font-secondary;
+    font-size: 15px;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+
+    &::placeholder {
+      color: #77716e;
+      opacity: 1;
+    }
+
+    &:focus {
+      border-color: $color-title;
+      box-shadow: 0 0 0 2px rgba($color-title, 0.12);
+    }
+
+    &:disabled {
+      background-color: #eee7e1;
+      color: #89817b;
+      cursor: not-allowed;
+    }
+  }
+
+   select {
+    cursor: pointer;
+     width: 51.4%;
+  }
+  
+}  
+
+.history {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  border: none;
+  margin: 0 0 12px;
+  padding: 0 7px;
+
+  legend {
+    margin-bottom: 4px;
+    font-size: 15px;
+    font-family: $font-secondary;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 15px;
+    font-family: $font-secondary;
+    cursor: pointer;
+  }
+
+  input[type='radio'] {
+    accent-color: $button-color;
+    width: 12px;
+    height: 12px;
+    margin: 0;
+    cursor: pointer;
+  }
+}
+
+.btn-next {
+  min-width: 58px;
+  padding: 6px 13px;
+  border: none;
+  border-radius: 5px;
+  background-color: $button-color;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: $font-secondary;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    background-color: lighten($button-color, 10%);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-title;
+    outline-offset: 3px;
+  }
+}

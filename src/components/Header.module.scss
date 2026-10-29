@@ -1,0 +1,23 @@
+$main-font: 'Marcellus', serif;
+$font-secondary: 'Quicksand', sans-serif;
+$color-title: #d77b5e;
+
+.consult{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;  
+}
+
+h1{
+  font-family: $main-font;
+  font-weight: 400;
+  font-size: clamp(25px, 4.2vw, 42px);
+  margin-bottom: 42px;
+  margin-top: 60px;
+  color: $color-title;
+}
+
+.consultheader{
+  width: 45%;  
+}
