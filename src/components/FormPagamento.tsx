@@ -143,7 +143,7 @@ function FormPagamento(){
      
       <div className={styles.actionspayment}>
         <button type="submit" className={styles['btn-payment']}>
-          Comprar Agora
+          Finalizar Agora
         </button>
         
         <button
