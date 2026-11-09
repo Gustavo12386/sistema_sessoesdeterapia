@@ -1,6 +1,5 @@
 import './App.scss'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import Header from './components/Header.tsx'
 import Login from './components/Login.tsx'
 import Recovery from './components/RecoveryPassword.tsx'
 import Main from './components/MainPage.tsx'
@@ -18,7 +17,7 @@ function App() {
     </div> 
     <Router>
      <Routes>
-       <Route path='/' element={<><Header/> <FormDados/></>}/>
+       <Route path='/' element={<FormDados/>}/>
        <Route path='/formpayment' element={<FormPagamento/>}/>
        <Route path='/login' element={<Login/>}/>
        <Route path='/recoverypassword' element={<Recovery/>}/>
