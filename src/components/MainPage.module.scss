@@ -196,6 +196,7 @@ a {
     background-color: $color-button-green;
 }
 
-.btn-section-finish{
-    background-color: $color-button-gray;
+.btn-section-start:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

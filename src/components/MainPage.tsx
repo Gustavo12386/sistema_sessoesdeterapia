@@ -97,6 +97,61 @@ function handleLogout() {
   navigate("/login", { replace: true });
 }
 
+async function handleDeleteAppointment(appointmentId: string) {
+
+  const confirmed = window.confirm(
+    "Deseja realmente excluir esta sessão?"
+  );
+
+  if (!confirmed) return;
+
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    navigate("/login");
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `http://localhost:8080/patient/appointments/${appointmentId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Não foi possível excluir a sessão.");
+    }
+
+    // Remove a sessão da lista exibida
+    setAppointments((previous) =>
+      previous.filter(
+        (appointment) => appointment.appointmentId !== appointmentId
+      )
+    );
+
+  } catch (error) {
+    console.error("Erro ao excluir sessão:", error);
+    alert("Não foi possível excluir a sessão.");
+  }
+}
+
+function isToday(date: string): boolean {
+  const today = new Date();
+
+  const todayFormatted = [
+    today.getFullYear(),
+    String(today.getMonth() + 1).padStart(2, "0"),
+    String(today.getDate()).padStart(2, "0")
+  ].join("-");
+
+  return date === todayFormatted;
+}
+
   return(
     <section className={styles.panel}>
      <header className={styles['panel__header']}>
@@ -148,7 +203,8 @@ function handleLogout() {
                  <td className={styles['section-action']}>
                     <button
                       type="button"
-                      className={styles['btn-section-start']}                  
+                      className={styles['btn-section-start']}      
+                      disabled={!isToday(appointment.date)}     
                     >
                       Iniciar Sessão
                     </button>
@@ -157,8 +213,9 @@ function handleLogout() {
                   <td className={styles['section-action']}>
                     <button
                       type="button"
-                      className={styles['btn-section-start']} 
-                      
+                      className={styles["btn-section-start"]}
+                      disabled={!isToday(appointment.date)}
+                     onClick={() => handleDeleteAppointment(appointment.appointmentId)}
                     >
                       Finalizei!
                     </button>
