@@ -22,7 +22,7 @@ function App() {
        <Route path='/login' element={<Login/>}/>
        <Route path='/recoverypassword' element={<Recovery/>}/>
        <Route path='/newpassword' element={<NewPassword/>}/>
-       <Route path='/mainpage' element={<Main/>} />
+       <Route path='/painel' element={<Main/>} />
      </Routes>
     </Router>  
    

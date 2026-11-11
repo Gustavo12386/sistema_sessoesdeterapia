@@ -69,6 +69,7 @@ a {
   margin-right: 10vh;
   transform: translateY(-20vh);
   transition: background-color 0.2s ease;
+  cursor: pointer;
 
   &:hover {
     background-color: darken($button-color, 10%);

@@ -1,18 +1,117 @@
+import { useState, useEffect } from 'react';
 import styles from './MainPage.module.scss'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+
+interface Patient {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  date_birth: string;
+  especiality_name: string;
+}
+
+interface Appointment {
+  appointmentId: string;
+  date: string;
+  hour: string;
+}
 
 function MainPage(){
+  const [patient, setPatient] = useState<Patient | null>(null);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+  async function loadPatient() {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "http://localhost:8080/patient/me",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      if (!response.ok) {
+          localStorage.removeItem("token");
+          navigate("/login");
+          return;
+      }
+
+      const data: Patient = await response.json();
+
+      setPatient(data);
+
+    } catch {
+      navigate("/login");
+    }
+  }
+
+  loadPatient();
+
+  async function loadAppointments() {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    navigate("/login");
+    return;
+  }
+
+  const response = await fetch(
+    "http://localhost:8080/patient/appointments",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  if (!response.ok) {
+    console.error("Erro ao carregar agendamentos:", response.status);
+    return;
+  }
+
+  const data: Appointment[] = await response.json();
+
+  setAppointments(data);
+}
+loadAppointments()
+}, [navigate]);
+
+
+
+function handleLogout() {
+  // Remove o token JWT
+  localStorage.removeItem("token");
+
+  // Redireciona para o login
+  navigate("/login", { replace: true });
+}
+
   return(
     <section className={styles.panel}>
      <header className={styles['panel__header']}>
-      <Link to={`index.html`} className={styles['btn-quit']}>
-        Sair da página
-      </Link>
+      <button
+          type="button"
+          className={styles["btn-quit"]}
+          onClick={handleLogout}
+        >
+          Sair da página
+        </button>
      </header>  
       <div className={styles.title}>
         <h1>
-         Olá Gustavo, seja bem-vindo ao
-         <span>painel das sessões</span>
+           Olá, {patient?.name || "Paciente"}, seja bem-vindo ao
+           <span> painel das sessões</span>
         </h1>
       </div>
 
@@ -31,58 +130,43 @@ function MainPage(){
           </thead>
 
           <tbody>
-            <tr>
-              <td className={styles['section-date']}>
-                <span>Data: 29/10/2026</span>
-                <span>Horário: 08:00</span>
-              </td>
+            {appointments.map((appointment) => (
+              <tr key={appointment.appointmentId}>
 
-              <td className={styles['section-action']}>
-                <button
-                  type="button"
-                  className={styles['btn-section-start']}                  
-                >
-                  Iniciar Sessão
-                </button>
-              </td>
+                <td className={styles["section-date"]}>
+                  <span>
+                    Data: {new Date(
+                      `${appointment.date}T00:00:00`
+                    ).toLocaleDateString("pt-BR")}
+                  </span>
 
-              <td className={styles['section-action']}>
-                <button
-                  type="button"
-                  className={styles['btn-section-start']} 
-                  
-                >
-                  Finalizei!
-                </button>
-              </td>
-            </tr>
+                  <span>
+                    Horário: {appointment.hour.slice(0, 5)}
+                  </span>
+                </td>
 
-            <tr>
-              <td className={styles['section-date']}>
-                <span>Data: 06/11/2026</span>
-                <span>Horário: 15:00</span>
-              </td>
+                 <td className={styles['section-action']}>
+                    <button
+                      type="button"
+                      className={styles['btn-section-start']}                  
+                    >
+                      Iniciar Sessão
+                    </button>
+                  </td>
 
-              <td className={styles['section-action']}>
-                <button
-                  type="button"
-                  className={styles['btn-section-finish']}
-                  
-                >
-                  Iniciar Sessão
-                </button>
-              </td>
+                  <td className={styles['section-action']}>
+                    <button
+                      type="button"
+                      className={styles['btn-section-start']} 
+                      
+                    >
+                      Finalizei!
+                    </button>
+                  </td>
 
-              <td className={styles['section-action']}>
-                <button
-                  type="button"
-                  className={styles['btn-section-finish']} 
-                  
-                >
-                  Finalizei!
-                </button>
-              </td>
-            </tr>
+              </tr>
+            ))}
+         
           </tbody>
         </table>
       </div>

@@ -327,7 +327,7 @@ const handleSubmit = async (e) => {
       <br/>
        <div className={styles['consult-actions']}>
         <button type="submit" className={styles['btn-next']} disabled={loading}>
-           {loading ? "Enviando..." : "Avançar"}
+           Avançar
         </button>
       </div>   
      <h1 className={styles.titleform2}>Selecione as datas e horários disponíveis</h1>     
