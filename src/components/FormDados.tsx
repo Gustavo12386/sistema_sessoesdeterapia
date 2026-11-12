@@ -1,5 +1,5 @@
 import styles from './FormDados.module.scss'
-import { useState } from "react";
+import { useState, type ChangeEvent } from "react";
 import especialidades from "../services/especialidades.json";
 
 const API_URL = "http://localhost:8080";
@@ -9,12 +9,21 @@ function FormDados() {
   const [especialityName, setEspecialityName] = useState("");
   const [dates, setDates] = useState([]);
   
+  const [dateBirth, setDateBirth] = useState("");
+  const [ageError, setAgeError] = useState("");
 
   const [selectedDates, setSelectedDates] = useState([]);
-const [hoursByDate, setHoursByDate] = useState({});
+  const [hoursByDate, setHoursByDate] = useState({});
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const [text, setText] = useState('');
+  const limit = 15;
+
+  const TelMask = (e: ChangeEvent<HTMLInputElement>) => {
+      setText(e.target.value);     
+  };
 
   const handleEspecialityChange = async (especialityId: string, name: string) => {
    setEspecialityId(especialityId);
@@ -102,6 +111,24 @@ const handleHourChange = (dateId, hourId) => {
     )
   );
 };
+
+function calculateAge(birthDate: string): number {
+  const today = new Date();
+  const birth = new Date(`${birthDate}T00:00:00`);
+
+  let age = today.getFullYear() - birth.getFullYear();
+
+  const monthDifference = today.getMonth() - birth.getMonth();
+
+  if (
+    monthDifference < 0 ||
+    (monthDifference === 0 && today.getDate() < birth.getDate())
+  ) {
+    age--;
+  }
+
+  return age;
+}
 
 const handleSubmit = async (e) => {
  e.preventDefault();
@@ -311,22 +338,48 @@ const handleSubmit = async (e) => {
           id="date_birth"
           name="date_birth"
           required
+          onChange={(event) => {
+          const value = event.target.value;
+
+          setDateBirth(value);
+
+          if (!value) {
+            setAgeError("");
+            return;
+          }
+
+          const age = calculateAge(value);
+
+          if (age < 16) {
+            setAgeError("O cadastro não é permitido para menores de 16 anos.");
+          } else if (age > 80) {
+            setAgeError("O cadastro não é permitido para pessoas acima de 80 anos.");
+          } else {
+            setAgeError("");
+          }
+        }}
         />
       </div>
-
+        {ageError && (
+            <span className={styles.error}>
+              {ageError}
+            </span>
+          )}
       <div className={styles.field}>
         <label>Telefone (WhatsApp):</label>
         <input
           type="tel"
           id="phone"
           name="phone"
-          placeholder="(00) 00000 - 0000"        
-          required
+          placeholder="(00) 00000 - 0000"          
+          onChange={TelMask} maxLength={limit}  
+          value={text}     
+          required 
         />
       </div>    
       <br/>
        <div className={styles['consult-actions']}>
-        <button type="submit" className={styles['btn-next']} disabled={loading}>
+        <button type="submit" className={styles['btn-next']} disabled={!!ageError || !dateBirth || loading}>
            Avançar
         </button>
       </div>   
@@ -345,6 +398,7 @@ const handleSubmit = async (e) => {
           onChange={e =>
             handleDateCheck(date, e.target.checked)
           }
+       
         />
 
         <label htmlFor={date.dateId}>
@@ -372,7 +426,7 @@ const handleSubmit = async (e) => {
             )
           }
           className={styles.selecthour}
-          required
+          
         >
           <option value="">
             Selecione um horário
@@ -387,7 +441,7 @@ const handleSubmit = async (e) => {
             </option>
           ))}
         </select>
-
+        
       </div>
     ))} 
       </div>      
@@ -398,7 +452,7 @@ const handleSubmit = async (e) => {
       )}
        <br/>
        <div className={styles['consult-actions']}>
-        <button type="submit" className={styles['btn-next']} disabled={loading}>
+        <button type="submit" className={styles['btn-next']} disabled={!!ageError || !dateBirth || loading}>
            {loading ? "Enviando..." : "Avançar"}
         </button>
       </div>
