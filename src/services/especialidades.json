@@ -1,17 +1,32 @@
 [
   {
     "especializationId": "9b26fd1a-8391-4445-b017-eb7403910560",
-    "especializationName": "Psicologia",
+    "especializationName": "Psicologia - Rodrigo Mendonça",
     "especializationValue": 141.41
   },
   {
     "especializationId": "c0943b2a-384e-41a1-be37-7b4ebb26a58b",
-    "especializationName": "Neuropsicologia",
+    "especializationName": "Psicologia - Tássia Lima",
     "especializationValue": 141.41
   },
   {
     "especializationId": "a905ebda-9138-4558-b3de-bab2f3ca3ee7",
-    "especializationName": "Nutrição",
+    "especializationName": "Nutrição - Ana Clara",
+    "especializationValue": 141.41
+  },
+  {
+    "especializationId": "8c815164-28a0-4d41-b872-3965d6d044d3",
+    "especializationName": "Psicologia - Gabriella Pereira",
+    "especializationValue": 141.41
+  },
+  {
+    "especializationId": "21602a00-d197-4f3e-ac53-5cb73d34b0c9",
+    "especializationName": "Psicologia - Debora de Almeida",
+    "especializationValue": 141.41
+  },
+  {
+    "especializationId": "0ea7ed48-d091-4afc-abf6-fbdab4be2514",
+    "especializationName": "Psicologia - Grazielle Santana",
     "especializationValue": 141.41
   }
 ]

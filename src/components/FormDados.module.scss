@@ -23,10 +23,20 @@ $button-color: #401b0e;
 h1{
   font-family: $main-font;
   font-weight: 400;
-  font-size: 35px;
-  transform: translateX(-8vh);
+  font-size: 40px;
+  transform: translateX(-5vh);
   width: 150%;
   margin-top: 60px;
+  color: $color-title;
+}
+
+h2{
+  font-family: $main-font;
+  font-weight: 400;
+  font-size: clamp(20px, 3.8vw, 36px);
+  text-align: center;
+  margin-top: 60px;
+  transform: translateX(-4vh);  
   color: $color-title;
 }
 
@@ -59,10 +69,11 @@ h1{
 
 .spantitle{
   font-family: $main-font;  
-  font-size: 35px;
+  font-size: 40px;
   color: $color-title;
   position: relative;
   bottom: 30px;
+  
 }
 
 .sr-only {
@@ -84,7 +95,7 @@ h1{
   gap: 24px;
   border: none;
   margin-bottom: 48px;
-  margin-right: 120px;
+  margin-right: 92px;
 
   .especiality {
     display: flex;
@@ -289,8 +300,3 @@ textarea {
   }
 }
 
-.error {
-  color: #d32f2f;
-  font-size: 12px;
-  margin-top: 5px;
-}
