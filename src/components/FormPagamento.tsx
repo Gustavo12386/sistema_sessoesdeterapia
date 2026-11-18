@@ -1,150 +1,363 @@
 import styles from './FormPagamento.module.scss';
+import NavigationMenu from './subcomponents/FormadePagamento'
+import { useState, useEffect} from "react";
+import CartaodeCredito from './subcomponents/CartaodeCredito';
+import PIX from './subcomponents/PIX';
 
-function FormPagamento(){
+const API_URL = "http://localhost:8080";
+
+interface FormPagamentoProps {
+  informationId: string;  
+}
+
+interface CouponResponse {
+  couponId: string;
+  couponCode: string;
+  discountPercentage: number;
+  validUntil: string;
+}
+
+function FormPagamento({
+  informationId,  
+}: FormPagamentoProps){
+  
+  const [pageselected, handleChange] = useState(0);
+  const [error, setError] = useState("");
+  const [couponCode, setCouponCode] = useState("");
+
+  const [appliedCoupon, setAppliedCoupon] =
+    useState<CouponResponse | null>(null);
+
+  const [couponError, setCouponError] = useState("");
+  const [couponSuccess, setCouponSuccess] = useState("");
+
+  const [validatingCoupon, setValidatingCoupon] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [patientname, setPatientName] = useState("");
+
+  // Valor da consulta retornado pelo Java
+  const [consultationAmount, setConsultationAmount] =
+    useState<number | null>(null);
+
+  const [priceError, setPriceError] = useState("");
+
+
+  // Buscar valor da consulta no backend
+  useEffect(() => {
+    const fetchConsultationAmount = async () => {
+      try {
+        setPriceError("");
+
+        const response = await fetch(
+          `${API_URL}/payments/consultation-amount`
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            "Não foi possível consultar o valor da consulta."
+          );
+        }
+
+        const result: unknown = await response.json();
+
+        const amount = Number(result);
+
+        if (!Number.isFinite(amount) || amount <= 0) {
+          throw new Error("O valor retornado pela API é inválido.");
+        }
+
+        setConsultationAmount(amount);
+
+      } catch (error) {
+        setPriceError(
+          error instanceof Error
+            ? error.message
+            : "Erro ao consultar o valor da consulta."
+        );
+      }
+    };
+
+    const fetchPatientName = async () => {
+    try {
+      const response = await fetch(
+        `${API_URL}/patient/first-consultation/${informationId}/name`
+      );
+
+      if (!response.ok) {
+        throw new Error("Não foi possível carregar o nome do paciente.");
+      }
+
+      const result = await response.text();
+
+      setPatientName(result);
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  if (informationId) {
+    fetchPatientName();
+  }
+
+    fetchConsultationAmount();
+  }, [informationId]);
+
+
+
+  // Cálculo do desconto
+  const discountPercentage =
+    appliedCoupon?.discountPercentage ?? 0;
+
+  const discountAmount =
+    (consultationAmount ?? 0) *
+    (discountPercentage / 100);
+
+  const finalAmount =
+    (consultationAmount ?? 0) - discountAmount;
+
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(value);
+  };
+
+  // Validação do cupom
+  const handleApplyCoupon = async () => {
+     setCouponError("");
+    setCouponSuccess("");
+    setAppliedCoupon(null);
+
+    const code = couponCode.trim().toUpperCase();
+
+    if (!code) {
+      setCouponError("Digite um código de cupom.");
+      return;
+    }
+
+    try {
+      setValidatingCoupon(true);
+
+      const response = await fetch(
+        `${API_URL}/coupons/validate/${encodeURIComponent(code)}`
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          "Cupom inválido ou expirado."
+        );
+      }
+
+      setAppliedCoupon(result);
+
+      setCouponSuccess(
+        `Cupom ${result.couponCode} aplicado! Desconto de ${result.discountPercentage}%.`
+      );
+
+    } catch (error) {
+
+      setCouponError(
+        "Não foi possível validar o cupom."
+      );
+
+    } finally {
+      setValidatingCoupon(false);
+    }
+  };
+
+  
+   // Envio para o Checkout Pro
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
+
+     e.preventDefault();
+
+    setError("");
+
+    if (consultationAmount === null) {
+      setError("Aguarde o carregamento do valor da consulta.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+
+      const response = await fetch(
+        `${API_URL}/payments/checkout`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            informationId,
+            couponCode: appliedCoupon?.couponCode ?? null,
+            paymentMethod: "both",
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result.message || "Não foi possível realizar o pagamento."
+        );
+      }
+
+      if (!result.checkoutUrl) {
+        throw new Error(
+          "O endereço do checkout não foi retornado."
+        );
+      }
+
+      window.location.href = result.checkoutUrl;
+
+    } catch (error) {
+
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Erro inesperado ao processar pagamento."
+      );
+
+    } finally {
+      setLoading(false);
+    }
+  };
+
    return(
     <section className={styles.payment}>
 
      <header className={styles.paymentheader}>
-       <h1>Realize seu Pagamento</h1>
+       <h1 className={styles.titlepage}>Realize seu Pagamento</h1>
      </header>
 
-     <form className={styles.paymentform} action="#" method="POST">
-       <div className={styles.field}>
-        <label>Cupom de Desconto</label>
-        <input
-          type="text"
-          id="cupom"
-          name="cupom"
-          placeholder="Tem um cupom de desconto? Digite aqui"          
-        />
-      </div>
-
-    
-      <fieldset className={styles.paymentoptionfield}>
-        <legend>Selecione uma forma de pagamento?</legend>
-
-        <div className={styles.paymentoptions}>
-
-          <label className={styles.paymentmethod}>
+     <form className={styles.paymentform} onSubmit={handleSubmit}>
+       <div className={styles.fieldpatient}>
+          <label className={styles.labelname}>Paciente:</label><span className={styles.patientname}>{patientname || "Carregando nome..."}</span>        
             <input
-              type="radio"
-              id="cartao"
-              name="forma_pagamento"
-              value="cartao_credito"
-              checked
-              required
+              type="hidden"
+              name="patientName"
+              value={patientname}
             />
-
-            <svg className={styles['payment-method-iconcard']}
-                 xmlns="http://www.w3.org/2000/svg"
-                 width="18" height="14"
-                 viewBox="0 0 24 18"
-                 fill="none"
-                 stroke="currentColor"
-                 stroke-width="1.5">
-              <rect x="1" y="1" width="22" height="16" rx="2"/>
-              <path d="M1 6h22"/>
-              <path d="M5 12h5"/>
-            </svg>
-
-            <span>Cartão de Crédito</span>
-          </label>
-
-          <label className={styles.paymentmethod}>
-            <input
-              type="radio"
-              id="pix"
-              name="forma_pagamento"
-              value="pix"
-              required
-            />
-
-            <svg className={styles['payment-method-iconpix']}
-                 xmlns="http://www.w3.org/2000/svg"
-                 width="16" height="16"
-                 viewBox="0 0 24 24"
-                 fill="currentColor">
-              <path d="M8.2 2.5a3.2 3.2 0 0 1 4.5 0l1.7 1.7-2.1 2.1a2.1 2.1 0 0 1-3 0L7.2 4.2z"/>
-              <path d="m15.8 2.5 1.7 1.7-2.1 2.1a2.1 2.1 0 0 1-3 0l-2.1-2.1 1.7-1.7a3.2 3.2 0 0 1 4.5 0z" opacity=".8"/>
-              <path d="m4.2 7.2 2.1-2.1 2.1 2.1a2.1 2.1 0 0 1 0 3l-2.1 2.1-2.1-2.1a2.1 2.1 0 0 1 0-3z"/>
-              <path d="m19.8 7.2-2.1-2.1-2.1 2.1a2.1 2.1 0 0 0 0 3l2.1 2.1 2.1-2.1a2.1 2.1 0 0 0 0-3z"/>
-              <path d="m8.2 13.5 2.1-2.1a2.1 2.1 0 0 1 3 0l2.1 2.1-2.1 2.1a2.1 2.1 0 0 1-3 0z"/>
-              <path d="m7.2 14.5 2.1-2.1a2.1 2.1 0 0 1 3 0l2.1 2.1-1.7 1.7a3.2 3.2 0 0 1-4.5 0z" opacity=".8"/>
-            </svg>
-
-            <span>PIX:</span>
-          </label>
-
         </div>
-      </fieldset>
-
-    
-      <div className={styles['card-information']} id="dadosCartao">
-
         <div className={styles.field}>
-          <label>Número do Cartão:</label>
-          <input
-            type="text"
-            id="numero_cartao"
-            name="numero_cartao"
-            placeholder="0000 0000 0000 0000"           
-          />
-        </div>
 
-        <div className={styles['information-card-line']}>
-
-          <div className={styles.field}>
-            <label>Validade:</label>
+          <label htmlFor="cupom">
+            Cupom de Desconto
+          </label>
             <input
               type="text"
-              id="validade"
-              name="validade"
-              placeholder="MM/AA"     
-              className={styles.validated}         
+              id="cupom"
+              name="cupom"
+              placeholder="Tem um cupom de desconto? Digite aqui"
+              value={couponCode}
+              className={styles.inputcoupon}
+              onChange={(e) => {
+                setCouponCode(e.target.value.toUpperCase());
+                setAppliedCoupon(null);
+                setCouponError("");
+                setCouponSuccess("");
+              }}
             />
+
+            <button
+              type="button"
+              onClick={handleApplyCoupon}
+              disabled={validatingCoupon || !couponCode.trim()}
+              className={styles['btn-coupon']}
+            >
+              {validatingCoupon ? "Validando..." : "Aplicar cupom"}
+            </button>
+
+          <div className={styles.couponcontainer}>           
+            
+
           </div>
 
-          <div className={styles.field}>
-            <label className={styles.labelcvv}>CVV:</label>
-            <input
-              type="password"
-              id="cvv"
-              name="cvv"
-              placeholder="3 ou 4 dígitos" 
-              className={styles.cvv}
-            />
-          </div>
+          {couponError && (
+            <p className={styles.error} role="alert">
+              {couponError}
+            </p>
+          )}
+
+          {couponSuccess && (
+            <p className={styles.success}>
+              {couponSuccess}
+            </p>
+          )}
 
         </div>
 
-       <div className={styles.field}>
-          <label>Nome do Titular:</label>
-          <input
-            type="text"
-            id="titular"
-            name="titular"
-            placeholder="Digite o nome impresso no cartão"   
-                  
-          />
-        </div>
+        <div className={styles.paymentSummary}>
 
-        <div className={styles.field}>
-          <label>Selecione o número de parcelas:</label>
-          <select id="parcelas" name="parcelas">
-            <option value="1">1 parcela de 141,41 BRL</option>
-            <option value="2">2 parcelas de 70,71 BRL</option>
-            <option value="3">3 parcelas de 47,14 BRL</option>
-          </select>
-        </div>
-        
+          <h3>Resumo do pagamento</h3>
+        {consultationAmount === null ? (
+            <p>Carregando valor da consulta...</p>
+          ) : (
+          <p>
+            Valor da consulta:
+            <strong>{formatCurrency(consultationAmount)}</strong>
+          </p>
+          )}
+          {appliedCoupon && (
+            <>
+              <p>
+                Desconto ({discountPercentage}%):
+                <strong>
+                  - {formatCurrency(discountAmount)}
+                </strong>
+              </p>
+            </>
+          )}
 
-      </div>    
+          <p>
+            Valor total:
+            <strong>{formatCurrency(finalAmount)}</strong>
+          </p>
 
-     
+        </div>    
+      <fieldset className={styles.paymentoptionfield}>
+        <legend>Selecione uma forma de pagamento?</legend>
+         <NavigationMenu updateTopic={handleChange}/> 
+          {(() => {
+              if(pageselected == 0){
+                return <CartaodeCredito/>; 
+              }
+              else if(pageselected == 1){
+              return <PIX/>;
+            }
+          })()}     
+      </fieldset>     
+      <br></br>
+
+      {error && (
+        <p role="alert" className={styles.error}>
+          {error}
+        </p>
+      )}
+
       <div className={styles.actionspayment}>
-        <button type="submit" className={styles['btn-payment']}>
-          Finalizar Agora
-        </button>
+          <button
+            type="submit"
+            className={styles['btn-payment']}
+            disabled={
+            loading ||
+            consultationAmount === null ||
+            !!priceError
+          }
+          >
+            {loading
+              ? 'Gerando pagamento...'
+              : 'Finalizar Agora'}
+          </button>
         
         <button
           type="button"

@@ -206,3 +206,86 @@ $font-secondary: 'Quicksand', sans-serif;
     background-color: darken($color-button-secondary, 8%);
   }
 }
+
+.textinformation{
+  position: relative;
+  top: 6vh;
+  right: 266px;
+  padding-bottom: 1vh;
+  
+}
+
+.couponcontainer {
+  display: flex;
+  gap: 12px;
+  align-items: stretch; 
+}
+
+.success {
+  color: #16803c;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.paymentSummary {
+  padding: 20px;
+  margin: 20px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;  
+  width: 48%;
+  
+
+  p {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-family: $font-secondary;
+  }
+
+  p:last-child {
+    border-top: 1px solid #ddd;
+    padding-top: 12px;
+    font-size: 18px;
+  }
+}
+
+h3 {
+    margin-bottom: 16px;
+    font-family: $font-secondary;
+  }
+
+.btn-coupon{
+  width: 10%;
+  margin-top: 5px;
+  padding: 5px 12px;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  font-family: $font-secondary;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+  background-color 0.2s ease,
+  transform 0.2s ease;
+  background-color: $color-button-secondary;
+   &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+}
+
+.fieldpatient{  
+  margin-bottom: 3vh;
+  margin-left: 8px;
+}
+
+.patientname{
+  font-family: $font-secondary;
+  margin-left: 3px;
+}
+
+.labelname{
+  font-family: $font-secondary;
+}
