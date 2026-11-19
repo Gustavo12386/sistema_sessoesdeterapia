@@ -179,7 +179,8 @@ $font-secondary: 'Quicksand', sans-serif;
   transition:
   background-color 0.2s ease,
   transform 0.2s ease;
-
+  position: relative;
+  bottom: 30px;
    &:focus-visible {
     outline: 2px solid $color-title;
     outline-offset: 3px;
@@ -209,8 +210,7 @@ $font-secondary: 'Quicksand', sans-serif;
 
 .textinformation{
   position: relative;
-  top: 6vh;
-  right: 266px;
+  top: 1vh;  
   padding-bottom: 1vh;
   
 }
@@ -289,3 +289,53 @@ h3 {
 .labelname{
   font-family: $font-secondary;
 }
+
+@media screen and (min-width: 744px) and (max-width: 1440px) {   
+  .paymentform{
+    transform: translateX(-40vh);
+  }
+  .btn-coupon{
+    width: 20%;     
+  }
+  .textinformation{
+    position: relative;
+    right: 5vh;
+  }
+  .titlepage{
+    transform: translateX(-65vh);
+  }
+}  
+
+@media screen and (max-width: 730px) {
+   .paymentform{
+    transform: translateX(-42vh);
+  }
+   .titlepage{
+    transform: translateX(-66vh);
+    font-size: 25px;
+  }
+  .btn-coupon{
+    width: 40%;     
+  }
+  .textinformation{
+    position: relative;
+    font-size: 12px;
+    right: 3vh;
+    width: 80%;
+  }
+  .btn-dificulty{
+    margin-top: 10px;
+    position: relative;
+    right: 10vh;
+    font-size: 12px;
+  }
+  .btn-payment{
+    position: relative;
+    left: 5vh;
+    font-size: 12px;
+  }
+   .paymentform input{
+    width: 66%;    
+  }
+  
+}  

@@ -25,7 +25,6 @@ h1{
   font-weight: 400;
   font-size: 40px;
   transform: translateX(-5vh);
-  width: 150%;
   margin-top: 60px;
   color: $color-title;
 }
@@ -98,8 +97,7 @@ h2{
   margin-right: 92px;
 
   .especiality {
-    display: flex;
-    align-items: flex-start;
+    display: flex;    
     gap: 10px;
     cursor: pointer;
     min-width: 0;
@@ -300,3 +298,106 @@ textarea {
   }
 }
 
+
+@media screen and (min-width: 744px) and (max-width: 1440px) {
+    .consultform{       
+      transform: translateX(7vh);
+    }
+    .spantitle{       
+      font-size: clamp(20px, 3.8vw, 36px);          
+    }
+    .title{      
+      font-size: clamp(20px, 3.8vw, 36px);  
+    }
+    .titleform2{
+      font-size: clamp(20px, 3.8vw, 36px); 
+      transform: translateX(3vh);
+    }
+     .consultform input{
+      width: 78%;  
+    }
+    .consultform select{
+      width: 78%;    
+    }
+    .consultform textarea{
+      width: 78%;    
+    }
+    .fieldcheckbox{
+      transform: translateX(-36vh);
+      width: 100vh;
+      label {
+        position: relative;
+        right: 38vh; 
+      }
+    }
+    .selecthour{
+      margin-top: 10px;
+      width: 70%;
+    }
+}
+@media screen and (max-width: 730px) {
+    .consultform{       
+      transform: translateX(3vh);
+    }    
+    .spantitle{       
+      font-size: 15px;     
+      position: relative;  
+      bottom: 10px;
+      left: 4vh; 
+    }
+    .title{      
+      font-size: 15px;  
+      width: 48vh;  
+      position: relative;
+      left: 3.3vh;   
+    }
+    .titleform2{
+      font-size: 16px;
+      transform: translateX(1vh);      
+      padding-bottom: 15px;
+    }   
+    .consultform input{
+      width: 78%;  
+    }
+    .consultform select{
+      width: 78%;    
+    }
+    .consultform textarea{
+      width: 78%;    
+    }    
+    .consulttitles{
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+    h2{
+      font-size: 15px;
+    }
+   
+    .especialities{
+      display: flex;
+      flex-direction: column;
+    }
+
+    .especialidade__nome{
+      font-size: 15px;
+    } 
+
+    .especialidade__valor{
+      font-size: 15px;
+    }
+
+    .fieldcheckbox{
+      transform: translateX(-36vh);
+      width: 100vh;
+      label {
+        position: relative;
+        right: 38vh; 
+      }
+    }
+
+    .selecthour{
+      margin-top: 10px;
+    }
+      
+}  
