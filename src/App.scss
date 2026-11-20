@@ -11,3 +11,11 @@ body{
   width: 25vh;
   height: 23vh;
 }
+
+@media screen and (max-width: 730px) {
+   .logo{
+      width: 15vh;
+      height: 15vh;
+      transform: translateX(-30px);
+    }
+}  

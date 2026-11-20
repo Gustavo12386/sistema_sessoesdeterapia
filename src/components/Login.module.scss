@@ -18,7 +18,7 @@ $font-secondary: 'Quicksand', sans-serif;
       font-weight: 400;
       line-height: 1.4;
     }
-  }
+}
 
 .logintheader{
   transform: translateX(70vh);
@@ -112,3 +112,26 @@ $font-secondary: 'Quicksand', sans-serif;
 .linkProfile:hover{    
     text-decoration: underline;
 }
+
+@media screen and (min-width: 744px) and (max-width: 1440px) { 
+.login{
+ transform: translateX(35vh);  
+}
+.loginform input{
+  width: 80%;
+}
+}  
+
+@media screen and (max-width: 730px) {
+   .login{
+    transform: translateX(35vh);  
+    }
+
+    .loginform input{
+      width: 70%;
+    }
+    
+    .loginheader{
+      margin-left: -140px;
+    }
+}  
